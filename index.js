@@ -51,44 +51,49 @@ app.get("/", async (req, res) => {
 });
 
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
-
 app.get("/update-cobj", async (req, res) => {
   const genreOptions = [
-    "action",
-    "adventure",
-    "rpg",
-    "simulation",
-    "indie",
-    "fps",
-    "puzzle",
-    "sports",
-    "racing",
-    "strategy",
-    "fighting",
-    "horror",
+    { label: "RPG", value: "RPG" },
+    { label: "FPS", value: "FPS" },
+    { label: "Strategy", value: "Strategy" },
+    { label: "Simulation", value: "Simulation" },
+    { label: "Indie", value: "Indie" },
+    { label: "Action", value: "Action" },
+    { label: "Adventure", value: "Adventure" },
+    { label: "Puzzle", value: "Puzzle" },
+    { label: "Sports", value: "Sports" },
+    { label: "Racing", value: "Racing" },
+    { label: "Fighting", value: "Fighting" },
+    { label: "Horror", value: "Horror" },
   ];
   const ratingOptions = [
-    "ec",
-    "e",
-    "e10+",
-    "t",
-    "m",
-    "ao",
-    "rp",
-    "3+",
-    "7+",
-    "12+",
-    "16+",
-    "18+",
+    { label: "EC", value: "EC" },
+    { label: "E", value: "E" },
+    { label: "E10+", value: "E10+" },
+    { label: "T", value: "T" },
+    { label: "M", value: "M" },
+    { label: "AO", value: "AO" },
+    { label: "RP", value: "RP" },
+    { label: "3+", value: "3+" },
+    { label: "7+", value: "7+" },
+    { label: "12+", value: "12+" },
+    { label: "16+", value: "16+" },
+    { label: "18+", value: "18+" },
   ];
   const devStatusOptions = [
-    "in_development",
-    "alpha",
-    "beta",
-    "released",
-    "sunsetting",
+    { label: "In Development", value: "In Development" },
+    { label: "Alpha", value: "Alpha" },
+    { label: "Beta", value: "Beta" },
+    { label: "Released", value: "Released" },
+    { label: "Sunsetting", value: "Sunsetting" },
   ];
-  const platformOptions = ["pc", "playstation", "xbox", "switch", "mobile"];
+  const platformOptions = [
+    { label: "PC", value: "PC" },
+    { label: "PlayStation", value: "PlayStation" },
+    { label: "Xbox", value: "Xbox" },
+    { label: "Switch", value: "Switch" },
+    { label: "Mobile", value: "Mobile" },
+  ];
 
   // fetch existing games (up to 100) to populate dropdown for updates
   const propertiesForList = [
@@ -134,6 +139,47 @@ app.get("/update-cobj", async (req, res) => {
 });
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
+app.post("/create-cobj", async (req, res) => {
+  const existingId = req.body.existing_id;
+
+  const props = {
+    game_name: req.body.game_name,
+    genre: req.body.genre || "",
+    release_date: req.body.release_date || "",
+    platform_availability: req.body.platform_availability || "",
+    rating: req.body.rating || "",
+    development_status: req.body.development_status || "",
+    base_price: req.body.base_price || "",
+    global_sales: req.body.global_sales || "",
+    lead_developer: req.body.lead_developer || "",
+    game_engine: req.body.game_engine || "",
+    store_url: req.body.store_url || "",
+  };
+
+  const payload = { properties: props };
+  const headers = {
+    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+    "Content-Type": "application/json",
+  };
+
+  try {
+    if (existingId) {
+      const updateEndpoint = `https://api.hubapi.com/crm/v3/objects/2-57074073/${existingId}`;
+      await axios.patch(updateEndpoint, payload, { headers });
+    } else {
+      const createEndpoint = `https://api.hubapi.com/crm/v3/objects/2-57074073`;
+      await axios.post(createEndpoint, payload, { headers });
+    }
+
+    return res.redirect("/");
+  } catch (err) {
+    console.error(
+      "Error creating/updating game:",
+      err.response ? err.response.data : err.message,
+    );
+    return res.redirect("/update-cobj");
+  }
+});
 
 // * Code for Route 3 goes here
 

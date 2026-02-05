@@ -28,7 +28,10 @@ html
         select#genre(name="genre")
           option(value="") -- Select genre --
           each g in genreOptions
-            option(value=g)= g
+            if g.value
+              option(value=g.value)= g.label
+            else
+              option(value=g)= g
 
         label(for="release_date") Release Date
         input#release_date(type="date" name="release_date")
@@ -37,19 +40,28 @@ html
         select#platform_availability(name="platform_availability")
           option(value="") -- Select platform --
           each p in platformOptions
-            option(value=p)= p
+            if p.value
+              option(value=p.value)= p.label
+            else
+              option(value=p)= p
 
         label(for="rating") Rating
         select#rating(name="rating")
           option(value="") -- Select rating --
           each r in ratingOptions
-            option(value=r)= r
+            if r && r.value
+              option(value=r.value)= r.label
+            else
+              option(value=r)= r
 
         label(for="development_status") Development Status
         select#development_status(name="development_status")
           option(value="") -- Select status --
           each d in devStatusOptions
-            option(value=d)= d
+            if d.value
+              option(value=d.value)= d.label
+            else
+              option(value=d)= d
 
         label(for="base_price") Base Price
         input#base_price(type="number" step="0.01" name="base_price")
@@ -75,20 +87,41 @@ html
         const existingSelect = document.getElementById('existing_game');
         const modeEl = document.getElementById('form-mode');
         const submitBtn = document.getElementById('submit-btn');
+
         const setField = (id, value) => { const el = document.getElementById(id); if (!el) return; el.value = value || ''; };
+        const setSelect = (id, value) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (value == null || value === '') { el.value = ''; return; }
+          const valStr = String(value).trim();
+          // try case-insensitive match to existing options
+          let matched = false;
+          for (let i = 0; i < el.options.length; i++) {
+            const opt = el.options[i];
+            if (opt.value && opt.value.toLowerCase() === valStr.toLowerCase()) {
+              el.selectedIndex = i; matched = true; break;
+            }
+          }
+          if (!matched) {
+            // fallback: set the raw value (will select if matches or leave blank)
+            el.value = value;
+          }
+        };
+
         const setModeCreate = () => { if(modeEl) modeEl.textContent = 'Creating new game'; if(submitBtn) submitBtn.value = 'Create'; };
         const setModeUpdate = (name, id) => { if(modeEl) modeEl.textContent = `Updating: ${name || id}`; if(submitBtn) submitBtn.value = 'Update'; };
+
         existingSelect && existingSelect.addEventListener('change', function(e) {
           const id = this.value;
           if(!id) {
             // clear form
             setField('existing_id','');
             setField('game_name','');
-            setField('genre','');
+            setSelect('genre','');
             setField('release_date','');
-            setField('platform_availability','');
-            setField('rating','');
-            setField('development_status','');
+            setSelect('platform_availability','');
+            setSelect('rating','');
+            setSelect('development_status','');
             setField('base_price','');
             setField('global_sales','');
             setField('lead_developer','');
@@ -102,11 +135,11 @@ html
           const p = game.properties || {};
           setField('existing_id', game.id);
           setField('game_name', p.game_name || '');
-          setField('genre', p.genre || '');
+          setSelect('genre', p.genre || '');
           setField('release_date', p.release_date || '');
-          setField('platform_availability', p.platform_availability || '');
-          setField('rating', p.rating || '');
-          setField('development_status', p.development_status || '');
+          setSelect('platform_availability', p.platform_availability || '');
+          setSelect('rating', p.rating || '');
+          setSelect('development_status', p.development_status || '');
           setField('base_price', p.base_price || '');
           setField('global_sales', p.global_sales || '');
           setField('lead_developer', p.lead_developer || '');
