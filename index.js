@@ -26,7 +26,7 @@ app.get("/", async (req, res) => {
     "game_engine",
     "store_url",
   ].join(",");
-  const gamesEndpoint = `https://api.hubapi.com/crm/v3/objects/2-57074073?properties=${encodeURIComponent(properties)}`;
+  const gamesEndpoint = `https://api.hubapi.com/crm/v3/objects/2-57074073?properties=${encodeURIComponent(properties)}&limit=100`;
   const headers = {
     Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
     "Content-Type": "application/json",
@@ -52,7 +52,86 @@ app.get("/", async (req, res) => {
 
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
-// * Code for Route 2 goes here
+app.get("/update-cobj", async (req, res) => {
+  const genreOptions = [
+    "action",
+    "adventure",
+    "rpg",
+    "simulation",
+    "indie",
+    "fps",
+    "puzzle",
+    "sports",
+    "racing",
+    "strategy",
+    "fighting",
+    "horror",
+  ];
+  const ratingOptions = [
+    "ec",
+    "e",
+    "e10+",
+    "t",
+    "m",
+    "ao",
+    "rp",
+    "3+",
+    "7+",
+    "12+",
+    "16+",
+    "18+",
+  ];
+  const devStatusOptions = [
+    "in_development",
+    "alpha",
+    "beta",
+    "released",
+    "sunsetting",
+  ];
+  const platformOptions = ["pc", "playstation", "xbox", "switch", "mobile"];
+
+  // fetch existing games (up to 100) to populate dropdown for updates
+  const propertiesForList = [
+    "game_name",
+    "genre",
+    "release_date",
+    "platform_availability",
+    "rating",
+    "development_status",
+    "base_price",
+    "global_sales",
+    "lead_developer",
+    "game_engine",
+    "store_url",
+  ].join(",");
+  const listEndpoint = `https://api.hubapi.com/crm/v3/objects/2-57074073?properties=${encodeURIComponent(propertiesForList)}&limit=100`;
+  const headers = {
+    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+    "Content-Type": "application/json",
+  };
+  try {
+    const resp = await axios.get(listEndpoint, { headers });
+    const games = resp.data.results || [];
+    res.render("update-cobj", {
+      title: "Create / Update Game",
+      genreOptions,
+      ratingOptions,
+      devStatusOptions,
+      platformOptions,
+      games,
+    });
+  } catch (err) {
+    console.error("Error fetching games for update form:", err.message);
+    res.render("update-cobj", {
+      title: "Create / Update Game",
+      genreOptions,
+      ratingOptions,
+      devStatusOptions,
+      platformOptions,
+      games: [],
+    });
+  }
+});
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 

@@ -51,6 +51,12 @@ h1 {
     box-shadow: 3px 2px 6px lightgrey;
 }
 
+.form-mode {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0.5rem 0 1rem;
+}
+
 label, input {
     margin-top: 5px;
     display: block;

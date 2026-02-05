@@ -1,0 +1,118 @@
+doctype html
+html
+  head
+    title= `${title}`
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    link(rel="stylesheet" href="/css/style.css")
+  body
+    h1 Create / Update Game
+    .form-wrapper
+      // Select existing game to update or leave blank to create new
+      label(for="existing_game") Existing game (choose to prefill form)
+      select#existing_game
+        option(value="") -- Create new game --
+        each g in games
+          option(value=g.id)= g.properties && g.properties.game_name ? g.properties.game_name : g.id
+
+      // mode label (creating or updating)
+      p.form-mode(id="form-mode") Creating new game
+
+      form(action="/create-cobj" method="post")
+        // store id when updating
+        input#existing_id(type="hidden" name="existing_id")
+
+        label(for="game_name") Game Name *
+        input#game_name(type="text" name="game_name" required)
+
+        label(for="genre") Genre
+        select#genre(name="genre")
+          option(value="") -- Select genre --
+          each g in genreOptions
+            option(value=g)= g
+
+        label(for="release_date") Release Date
+        input#release_date(type="date" name="release_date")
+
+        label(for="platform_availability") Platform
+        select#platform_availability(name="platform_availability")
+          option(value="") -- Select platform --
+          each p in platformOptions
+            option(value=p)= p
+
+        label(for="rating") Rating
+        select#rating(name="rating")
+          option(value="") -- Select rating --
+          each r in ratingOptions
+            option(value=r)= r
+
+        label(for="development_status") Development Status
+        select#development_status(name="development_status")
+          option(value="") -- Select status --
+          each d in devStatusOptions
+            option(value=d)= d
+
+        label(for="base_price") Base Price
+        input#base_price(type="number" step="0.01" name="base_price")
+
+        label(for="global_sales") Global Sales
+        input#global_sales(type="number" step="0.01" name="global_sales")
+
+        label(for="lead_developer") Lead Developer
+        input#lead_developer(type="text" name="lead_developer")
+
+        label(for="game_engine") Game Engine
+        input#game_engine(type="text" name="game_engine")
+
+        label(for="store_url") Store URL
+        input#store_url(type="url" name="store_url")
+
+        input#submit-btn(type="submit" value="Create")
+
+    // client-side helper to prefill the form when selecting an existing game
+    if games && games.length
+      script.
+        const GAMES = !{JSON.stringify(games)};
+        const existingSelect = document.getElementById('existing_game');
+        const modeEl = document.getElementById('form-mode');
+        const submitBtn = document.getElementById('submit-btn');
+        const setField = (id, value) => { const el = document.getElementById(id); if (!el) return; el.value = value || ''; };
+        const setModeCreate = () => { if(modeEl) modeEl.textContent = 'Creating new game'; if(submitBtn) submitBtn.value = 'Create'; };
+        const setModeUpdate = (name, id) => { if(modeEl) modeEl.textContent = `Updating: ${name || id}`; if(submitBtn) submitBtn.value = 'Update'; };
+        existingSelect && existingSelect.addEventListener('change', function(e) {
+          const id = this.value;
+          if(!id) {
+            // clear form
+            setField('existing_id','');
+            setField('game_name','');
+            setField('genre','');
+            setField('release_date','');
+            setField('platform_availability','');
+            setField('rating','');
+            setField('development_status','');
+            setField('base_price','');
+            setField('global_sales','');
+            setField('lead_developer','');
+            setField('game_engine','');
+            setField('store_url','');
+            setModeCreate();
+            return;
+          }
+          const game = GAMES.find(g=>g.id===id);
+          if(!game) return;
+          const p = game.properties || {};
+          setField('existing_id', game.id);
+          setField('game_name', p.game_name || '');
+          setField('genre', p.genre || '');
+          setField('release_date', p.release_date || '');
+          setField('platform_availability', p.platform_availability || '');
+          setField('rating', p.rating || '');
+          setField('development_status', p.development_status || '');
+          setField('base_price', p.base_price || '');
+          setField('global_sales', p.global_sales || '');
+          setField('lead_developer', p.lead_developer || '');
+          setField('game_engine', p.game_engine || '');
+          setField('store_url', p.store_url || '');
+          setModeUpdate(p.game_name || game.id, game.id);
+        });
+        // set initial mode
+        setModeCreate();

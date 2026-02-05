@@ -10,7 +10,7 @@ html
       if data && data.length
         each game in data
           .card
-            h2.card__name(id=`game-${game.id}`) #{game.properties.game_name || game.id}
+            h2.card__name(id=`game-${game.id}`) #{game.properties.game_name || game.properties.name || game.id}
             ul.card__details
               if game.properties.genre
                 li Genre: #{game.properties.genre}
