@@ -10,8 +10,13 @@ app.use(express.json());
 
 // * Please DO NOT INCLUDE the private app access token in your repo. Don't do this practicum in your normal account.
 const PRIVATE_APP_ACCESS = process.env.ACCESS_TOKEN;
+if (!PRIVATE_APP_ACCESS) {
+  console.warn(
+    "Warning: PRIVATE_APP_ACCESS is not set. Add ACCESS_TOKEN to your local .env (do not commit it).",
+  );
+}
 
-// TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
+// ROUTE: homepage — lists Games from the HubSpot custom object and renders `homepage.pug`
 app.get("/", async (req, res) => {
   const properties = [
     "game_name",
@@ -46,11 +51,12 @@ app.get("/", async (req, res) => {
     } else {
       console.error(error);
     }
-    res.render("games", { title: "Games | HubSpot APIs", data: [] });
+    // On error show an empty homepage view instead of the old `games` template
+    res.render("homepage", { title: "Games | HubSpot APIs", data: [] });
   }
 });
 
-// TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
+// ROUTE: form — serves create/update form and option lists (update-cobj) -- implemented
 app.get("/update-cobj", async (req, res) => {
   const genreOptions = [
     { label: "RPG", value: "RPG" },
@@ -123,8 +129,8 @@ app.get("/update-cobj", async (req, res) => {
   try {
     const resp = await axios.get(listEndpoint, { headers });
     const games = resp.data.results || [];
-    res.render("update-cobj", {
-      title: "Create / Update Game",
+    res.render("updates", {
+      title: "Update Custom Object Form | Integrating With HubSpot I Practicum",
       genreOptions,
       ratingOptions,
       devStatusOptions,
@@ -135,8 +141,8 @@ app.get("/update-cobj", async (req, res) => {
     });
   } catch (err) {
     console.error("Error fetching games for update form:", err.message);
-    res.render("update-cobj", {
-      title: "Create / Update Game",
+    res.render("updates", {
+      title: "Update Custom Object Form | Integrating With HubSpot I Practicum",
       genreOptions,
       ratingOptions,
       devStatusOptions,
@@ -146,8 +152,8 @@ app.get("/update-cobj", async (req, res) => {
   }
 });
 
-// TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
-app.post("/create-cobj", async (req, res) => {
+// ROUTE: create/update — handles form POST to create or update a game and redirects to homepage
+app.post("/update-cobj", async (req, res) => {
   const existingId = req.body.existing_id;
 
   // handle platform_availability array (checkboxes) or single value; send as an array to HubSpot
@@ -200,6 +206,31 @@ app.post("/create-cobj", async (req, res) => {
     return res.redirect("/update-cobj");
   }
 });
+// DELETE route to remove a custom object record by id
+app.delete("/delete-cobj/:id", async (req, res) => {
+  const id = req.params.id;
+  if (!id) return res.status(400).json({ error: "Missing id parameter" });
 
-// * Localhost
-app.listen(3000, () => console.log("Listening on http://localhost:3000"));
+  const deleteEndpoint = `https://api.hubapi.com/crm/v3/objects/2-57074073/${id}`;
+  const headers = {
+    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+    "Content-Type": "application/json",
+  };
+
+  try {
+    await axios.delete(deleteEndpoint, { headers });
+    return res.status(204).send();
+  } catch (err) {
+    console.error(
+      "Error deleting game:",
+      err.response ? err.response.data : err.message,
+    );
+    if (err.response) {
+      return res.status(err.response.status).json({ error: err.response.data });
+    }
+    return res.status(500).json({ error: err.message });
+  }
+});
+// * Localhost (respect PORT env when set)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));

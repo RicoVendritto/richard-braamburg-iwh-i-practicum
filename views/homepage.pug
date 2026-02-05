@@ -44,7 +44,7 @@ html
                 td #{p.game_engine || ''}
                 td
                   if p.store_url
-                    a(href=p.store_url target="_blank") #{p.store_url}
+                    a(href=p.store_url target="_blank" rel="noopener noreferrer") #{p.store_url}
                   else
                     | -
                 td
@@ -55,18 +55,31 @@ html
         p No games found. 
         a.btn(href="/update-cobj") Add one
 
-    // client-side delete confirmation (no server-side delete implemented)
+    // client-side delete confirmation + call to server DELETE route
     script.
       (function(){
-        document.addEventListener('click', function(e){
+        document.addEventListener('click', async function(e){
           const el = e.target.closest && e.target.closest('.btn.danger');
           if(!el) return;
           e.preventDefault();
           const id = el.getAttribute('data-id');
           const name = el.getAttribute('data-name') || id;
-          const confirmed = confirm(`Are you sure you want to delete "${name}" (id: ${id})? This action is not implemented yet.`);
-          if(confirmed){
-            alert('Delete confirmed. DELETE request is not implemented in this demo. Intended endpoint: /crm/v3/objects/2-57074073/' + id);
+          const confirmed = confirm(`Are you sure you want to delete "${name}" (id: ${id})?`);
+          if(!confirmed) return;
+
+          try {
+            const resp = await fetch(`/delete-cobj/${encodeURIComponent(id)}`, { method: 'DELETE' });
+            if (resp.ok) {
+              alert(`Deleted ${name} (${id}). Refreshing page.`);
+              window.location.reload();
+            } else {
+              let body;
+              try { body = await resp.json(); } catch(_) { body = null; }
+              const msg = body && body.error ? (body.error.message || JSON.stringify(body.error)) : `Status ${resp.status}`;
+              alert('Delete failed: ' + msg);
+            }
+          } catch (err) {
+            alert('Delete failed: ' + err.message);
           }
         });
       })();
