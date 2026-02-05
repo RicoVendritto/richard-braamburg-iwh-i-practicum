@@ -1,0 +1,37 @@
+doctype html
+html
+  head
+    title= `${title}`
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    link(rel="stylesheet" href="/css/style.css")
+  body
+    h1 Games
+    .cards
+      if data && data.length
+        each game in data
+          .card
+            h2.card__name(id=`game-${game.id}`) #{game.properties.game_name || game.id}
+            ul.card__details
+              if game.properties.genre
+                li Genre: #{game.properties.genre}
+              if game.properties.release_date
+                li Release Date: #{game.properties.release_date}
+              if game.properties.platform_availability
+                li Platforms: #{game.properties.platform_availability}
+              if game.properties.rating
+                li Rating: #{game.properties.rating}
+              if game.properties.development_status
+                li Status: #{game.properties.development_status}
+              if game.properties.base_price
+                li Base Price: #{game.properties.base_price}
+              if game.properties.global_sales
+                li Global Sales: #{game.properties.global_sales}
+              if game.properties.lead_developer
+                li Lead Developer: #{game.properties.lead_developer}
+              if game.properties.game_engine
+                li Game Engine: #{game.properties.game_engine}
+              if game.properties.store_url
+                li Store: 
+                  a(href=game.properties.store_url target="_blank") #{game.properties.store_url}
+      else
+        p No games found.

@@ -24,6 +24,17 @@ h1 {
     border: solid 1px lightgrey;
     border-radius: 15px;
     box-shadow: 3px 2px 6px lightgrey;
+    overflow: hidden;
+}
+
+.card__details {
+    margin: 0.5rem 0 0;
+    padding-left: 1.2rem;
+    list-style: disc inside;
+}
+
+.card__details li {
+    margin-bottom: 0.25rem;
 }
 
 .card__email {
