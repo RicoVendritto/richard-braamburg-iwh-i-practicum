@@ -7,7 +7,7 @@ html
   body
     h1 Create / Update Game
     a.btn(href="/") Back to overview
-    
+
     .form-wrapper
       // Select existing game to update or leave blank to create new
       label(for="existing_game") Existing game (choose to prefill form)
@@ -171,5 +171,12 @@ html
           setField('store_url', p.store_url || '');
           setModeUpdate(p.game_name || game.id, game.id);
         });
+        // If a `selectedId` was passed in the query, select it and trigger prefill
+        const SELECTED_ID = !{JSON.stringify(selectedId || '')};
+        if(SELECTED_ID && existingSelect) {
+          existingSelect.value = SELECTED_ID;
+          existingSelect.dispatchEvent(new Event('change'));
+        }
+
         // set initial mode
-        setModeCreate();
+        if(!SELECTED_ID) setModeCreate();

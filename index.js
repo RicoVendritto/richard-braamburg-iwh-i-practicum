@@ -131,6 +131,7 @@ app.get("/update-cobj", async (req, res) => {
       platformOptions,
       gameEngineOptions,
       games,
+      selectedId: req.query.selected || "",
     });
   } catch (err) {
     console.error("Error fetching games for update form:", err.message);

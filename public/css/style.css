@@ -51,6 +51,13 @@ h1 {
 .btn:hover {
     opacity: 0.9;
 }
+
+/* small variant for inline actions */
+.btn.small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+    margin: 0;
+}
 .card__email {
     font-size: 1rem;
 }

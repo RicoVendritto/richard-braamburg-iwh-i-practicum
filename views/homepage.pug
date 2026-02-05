@@ -46,6 +46,8 @@ html
                     a(href=p.store_url target="_blank") #{p.store_url}
                   else
                     | -
+                td
+                  a.btn.small(href=`/update-cobj?selected=${game.id}`) Edit
       else
         p No games found. 
         a.btn(href="/update-cobj") Add one
