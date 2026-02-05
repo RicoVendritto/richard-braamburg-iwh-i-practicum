@@ -7,7 +7,13 @@ body, * {
 }
 
 h1 {
-    margin: 1rem;
+    margin: 1rem 0 0.75rem 1rem; /* equal top & left spacing */
+}
+
+/* top-level page actions (buttons directly under body) */
+body > a.btn {
+    margin-left: 1rem;
+    margin-top: 0.5rem;
 }
 
 .cards {
@@ -24,35 +30,230 @@ h1 {
     border: solid 1px lightgrey;
     border-radius: 15px;
     box-shadow: 3px 2px 6px lightgrey;
+    overflow: hidden;
 }
 
+.card__details {
+    margin: 0.5rem 0 0;
+    padding-left: 1.2rem;
+    list-style: disc inside;
+}
+
+.card__details li {
+    margin-bottom: 0.25rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.5rem 0.85rem;
+    border-radius: 8px;
+    text-decoration: none;
+    margin: 0 0.5rem 0.5rem 0;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    opacity: 0.95;
+}
+
+/* small variant for inline actions */
+.btn.small {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.85rem;
+    margin: 0;
+    border-radius: 6px;
+    min-width: 56px; /* keep small buttons readable */
+    justify-content: center;
+    white-space: nowrap; /* prevent label wrapping */
+}
+
+
+/* secondary variant for Cancel / neutral actions (white bg, black text, same size as primary) */
+.btn.secondary {
+    background: #fff;
+    color: #111827;
+    border: 1px solid #d2d8db;
+    box-shadow: none;
+    padding: 0.6rem 1rem; /* match primary sizing */
+    border-radius: 8px;
+    font-weight: 700;
+}
+.btn.secondary:hover {
+    background: #f7f9fa;
+}
+
+.btn.danger {
+    background-color: #d9534f;
+}
+
+.btn.danger:hover {
+    opacity: 0.98;
+} 
 .card__email {
     font-size: 1rem;
 }
 
 .form-wrapper {
-    font-size: 18px;
-    max-width: 768px;
+    font-size: 16px;
+    max-width: 720px;
     margin: 2rem auto;
-    padding: 2rem;
-    border: solid 1px lightgrey;
-    border-radius: 15px;
-    box-shadow: 3px 2px 6px lightgrey;
+    padding: 1.75rem;
+    border: solid 1px #e6e9eb;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(20,30,40,0.06);
+    background: #fff;
 }
 
-label, input {
-    margin-top: 5px;
+.form-mode {
+    font-size: 0.95rem;
+    color: #6b7280; /* muted gray */
+    margin: 0.25rem 0 1rem;
+}
+
+/* Form fields - consistent widths and spacing */
+.form-wrapper label {
     display: block;
-    font-size: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0.85rem 0 0.65rem 0; /* extra top spacing so headers don't sit too close to previous field */
+    color: #111827;
 }
 
-input[type="text"] {
-    padding: .25rem;
+.form-wrapper .form-row {
+    margin-bottom: 1rem;
 }
 
-input[type="submit"] {
-    background-color: lightgrey;
+.form-wrapper input[type="text"],
+.form-wrapper input[type="url"],
+.form-wrapper input[type="number"],
+.form-wrapper input[type="date"],
+.form-wrapper select,
+.form-wrapper textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #d2d8db;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #111827;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.form-wrapper input[type="text"]:focus,
+.form-wrapper input[type="url"]:focus,
+.form-wrapper input[type="number"]:focus,
+.form-wrapper input[type="date"]:focus,
+.form-wrapper select:focus {
+    outline: none;
+    border-color: #7c9cff;
+    box-shadow: 0 0 0 3px rgba(124,156,255,0.12);
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin: 0.25rem 0 0.75rem;
+}
+
+.checkbox-group label.checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.checkbox-group input[type="checkbox"] {
+    transform: translateY(1px);
+}
+
+/* Primary CTA (HubSpot-like orange) */
+.btn.primary, .form-wrapper input[type="submit"], input.btn.primary {
+    background: linear-gradient(180deg,#ff7a3a,#ff5d1f);
+    color: #fff;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
     border: none;
-    padding: .375rem 1rem;
-    margin-top: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(255,122,58,0.18);
+}
+
+.form-actions {
+    margin-top: 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.btn.primary:hover, .form-wrapper input[type="submit"]:hover {
+    opacity: 0.98;
+}
+
+.form-note {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+/* Table spacing and cell padding for readability */
+.table-wrapper {
+    margin: 1.75rem 1rem;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.table th, .table td {
+    border: 1px solid #e0e0e0;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    vertical-align: middle;
+    white-space: normal;
+    word-break: break-word;
+}
+
+/* Make action columns stay sized to their content and prevent button text wrap */
+.table td:last-child, .table td:nth-last-child(2) {
+    white-space: nowrap; /* don't allow the cell to wrap */
+    width: 1%; /* allow only as much width as needed */
+}
+
+/* Ensure buttons in table cells don't wrap or shrink */
+.table td .btn {
+    white-space: nowrap;
+}
+
+.table th {
+    background: #f7f7f7;
+    font-weight: 600;
+}
+
+.table th {
+    background: #f7f7f7;
+    font-weight: 600;
+}
+
+/* make secondary anchors match primary vertical alignment */
+.btn.secondary, .btn.secondary.small {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Small screens tweak */
+@media (max-width: 520px) {
+    .form-wrapper { padding: 1rem; margin: 1rem; }
 }

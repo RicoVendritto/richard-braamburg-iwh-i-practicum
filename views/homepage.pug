@@ -1,0 +1,85 @@
+doctype html
+html
+  head
+    title= `${title}`
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    link(rel="stylesheet" href="/css/style.css")
+  body
+    h1 Games
+    a.btn(href="/update-cobj") Add to this table
+
+    .table-wrapper
+      if data && data.length
+        table.table
+          thead
+            tr
+              th ID
+              th Name
+              th Genre
+              th Release Date
+              th Platforms
+              th Rating
+              th Status
+              th Base Price
+              th Global Sales
+              th Lead Developer
+              th Game Engine
+              th Store
+              th
+              th
+            each game in data
+              - const p = game.properties || {}
+              tr
+                td #{game.id}
+                td #{p.game_name || p.name || ''}
+                td #{p.genre || ''}
+                td #{p.release_date || ''}
+                - var platforms = Array.isArray(p.platform_availability) ? p.platform_availability.join(', ') : (p.platform_availability || '')
+                td #{platforms}
+                td #{p.esrb__pegi_rating || ''}
+                td #{p.development_status || ''}
+                td #{p.base_price || ''}
+                td #{p.global_sales__player_count || ''}
+                td #{p.lead_developer__studio || ''}
+                td #{p.game_engine || ''}
+                td
+                  if p.store_url
+                    a(href=p.store_url target="_blank" rel="noopener noreferrer") #{p.store_url}
+                  else
+                    | -
+                td
+                  a.btn.small(href=`/update-cobj?selected=${game.id}`) Edit
+                td
+                  a.btn.small.danger(href="#" data-id=`${game.id}` data-name=`${p.game_name || ''}`) Delete
+      else
+        p No games found. 
+        a.btn(href="/update-cobj") Add one
+
+    // client-side delete confirmation + call to server DELETE route
+    script.
+      (function(){
+        document.addEventListener('click', async function(e){
+          const el = e.target.closest && e.target.closest('.btn.danger');
+          if(!el) return;
+          e.preventDefault();
+          const id = el.getAttribute('data-id');
+          const name = el.getAttribute('data-name') || id;
+          const confirmed = confirm(`Are you sure you want to delete "${name}" (id: ${id})?`);
+          if(!confirmed) return;
+
+          try {
+            const resp = await fetch(`/delete-cobj/${encodeURIComponent(id)}`, { method: 'DELETE' });
+            if (resp.ok) {
+              alert(`Deleted ${name} (${id}). Refreshing page.`);
+              window.location.reload();
+            } else {
+              let body;
+              try { body = await resp.json(); } catch(_) { body = null; }
+              const msg = body && body.error ? (body.error.message || JSON.stringify(body.error)) : `Status ${resp.status}`;
+              alert('Delete failed: ' + msg);
+            }
+          } catch (err) {
+            alert('Delete failed: ' + err.message);
+          }
+        });
+      })();
