@@ -94,6 +94,12 @@ app.get("/update-cobj", async (req, res) => {
     { label: "Switch", value: "Switch" },
     { label: "Mobile", value: "Mobile" },
   ];
+  const gameEngineOptions = [
+    { label: "Unreal Engine 5", value: "Unreal Engine 5" },
+    { label: "Unity", value: "Unity" },
+    { label: "Godot", value: "Godot" },
+    { label: "Proprietary", value: "Proprietary" },
+  ];
 
   // fetch existing games (up to 100) to populate dropdown for updates
   const propertiesForList = [
@@ -123,6 +129,7 @@ app.get("/update-cobj", async (req, res) => {
       ratingOptions,
       devStatusOptions,
       platformOptions,
+      gameEngineOptions,
       games,
     });
   } catch (err) {

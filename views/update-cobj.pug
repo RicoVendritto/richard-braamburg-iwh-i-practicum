@@ -6,6 +6,8 @@ html
     link(rel="stylesheet" href="/css/style.css")
   body
     h1 Create / Update Game
+    a.btn(href="/") Back to overview
+    
     .form-wrapper
       // Select existing game to update or leave blank to create new
       label(for="existing_game") Existing game (choose to prefill form)
@@ -72,7 +74,13 @@ html
         input#lead_developer(type="text" name="lead_developer")
 
         label(for="game_engine") Game Engine
-        input#game_engine(type="text" name="game_engine")
+        select#game_engine(name="game_engine")
+          option(value="") -- Select engine --
+          each ge in gameEngineOptions
+            if ge && ge.value
+              option(value=ge.value)= ge.label
+            else
+              option(value=ge)= ge
 
         label(for="store_url") Store URL
         input#store_url(type="url" name="store_url")
@@ -159,7 +167,7 @@ html
           setField('base_price', p.base_price || '');
           setField('global_sales', p.global_sales__player_count || '');
           setField('lead_developer', p.lead_developer__studio || '');
-          setField('game_engine', p.game_engine || '');
+            setSelect('game_engine', p.game_engine || '');
           setField('store_url', p.store_url || '');
           setModeUpdate(p.game_name || game.id, game.id);
         });
