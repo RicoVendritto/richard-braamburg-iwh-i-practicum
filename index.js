@@ -158,7 +158,8 @@ app.post("/create-cobj", async (req, res) => {
     game_name: req.body.game_name,
     genre: req.body.genre || "",
     release_date: req.body.release_date || "",
-    platform_availability: platformArray,
+    // Send platform_availability as a semicolon-separated string (HubSpot expects `;` between enum values)
+    platform_availability: platformArray.join(";"),
     esrb__pegi_rating: req.body.rating || "",
     development_status: req.body.development_status || "",
     base_price: req.body.base_price || "",
@@ -191,50 +192,6 @@ app.post("/create-cobj", async (req, res) => {
     return res.redirect("/update-cobj");
   }
 });
-
-/** 
-* * This is sample code to give you a reference for how you should structure your calls. 
-
-* * App.get sample
-app.get('/contacts', async (req, res) => {
-    const contacts = 'https://api.hubspot.com/crm/v3/objects/contacts';
-    const headers = {
-        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
-        'Content-Type': 'application/json'
-    }
-    try {
-        const resp = await axios.get(contacts, { headers });
-        const data = resp.data.results;
-        res.render('contacts', { title: 'Contacts | HubSpot APIs', data });      
-    } catch (error) {
-        console.error(error);
-    }
-});
-
-* * App.post sample
-app.post('/update', async (req, res) => {
-    const update = {
-        properties: {
-            "favorite_book": req.body.newVal
-        }
-    }
-
-    const email = req.query.email;
-    const updateContact = `https://api.hubapi.com/crm/v3/objects/contacts/${email}?idProperty=email`;
-    const headers = {
-        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
-        'Content-Type': 'application/json'
-    };
-
-    try { 
-        await axios.patch(updateContact, update, { headers } );
-        res.redirect('back');
-    } catch(err) {
-        console.error(err);
-    }
-
-});
-*/
 
 // * Localhost
 app.listen(3000, () => console.log("Listening on http://localhost:3000"));
