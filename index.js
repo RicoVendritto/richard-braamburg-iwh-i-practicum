@@ -142,11 +142,17 @@ app.get("/update-cobj", async (req, res) => {
 app.post("/create-cobj", async (req, res) => {
   const existingId = req.body.existing_id;
 
+  // handle platform_availability array (checkboxes) or single value
+  const platformRaw = req.body.platform_availability;
+  const platformValue = Array.isArray(platformRaw)
+    ? platformRaw.join(",")
+    : platformRaw || "";
+
   const props = {
     game_name: req.body.game_name,
     genre: req.body.genre || "",
     release_date: req.body.release_date || "",
-    platform_availability: req.body.platform_availability || "",
+    platform_availability: platformValue,
     rating: req.body.rating || "",
     development_status: req.body.development_status || "",
     base_price: req.body.base_price || "",
@@ -155,7 +161,6 @@ app.post("/create-cobj", async (req, res) => {
     game_engine: req.body.game_engine || "",
     store_url: req.body.store_url || "",
   };
-
   const payload = { properties: props };
   const headers = {
     Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,

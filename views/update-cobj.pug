@@ -36,14 +36,13 @@ html
         label(for="release_date") Release Date
         input#release_date(type="date" name="release_date")
 
-        label(for="platform_availability") Platform
-        select#platform_availability(name="platform_availability")
-          option(value="") -- Select platform --
+        label Platform Availability
+        .checkbox-group#platform_group
           each p in platformOptions
-            if p.value
-              option(value=p.value)= p.label
-            else
-              option(value=p)= p
+            - const pid = `platform_${p.value}`
+            label.checkbox(for=pid)
+              input(type="checkbox" id=pid name="platform_availability" value=p.value)
+              |  #{p.label}
 
         label(for="rating") Rating
         select#rating(name="rating")
@@ -111,6 +110,23 @@ html
         const setModeCreate = () => { if(modeEl) modeEl.textContent = 'Creating new game'; if(submitBtn) submitBtn.value = 'Create'; };
         const setModeUpdate = (name, id) => { if(modeEl) modeEl.textContent = `Updating: ${name || id}`; if(submitBtn) submitBtn.value = 'Update'; };
 
+        const parseMulti = (raw) => {
+          if(!raw) return [];
+          // split on comma, semicolon or pipe
+          return String(raw).split(/[,;|]/).map(s=>s.trim()).filter(Boolean);
+        };
+
+        const setCheckboxes = (name, values) => {
+          const group = document.getElementsByName(name);
+          if(!group || !group.length) return;
+          // normalize values to lower-case for matching
+          const wanted = (values || []).map(v=>String(v).trim().toLowerCase());
+          for (let i=0;i<group.length;i++){
+            const cb = group[i];
+            cb.checked = wanted.includes(String(cb.value).trim().toLowerCase());
+          }
+        };
+
         existingSelect && existingSelect.addEventListener('change', function(e) {
           const id = this.value;
           if(!id) {
@@ -119,7 +135,7 @@ html
             setField('game_name','');
             setSelect('genre','');
             setField('release_date','');
-            setSelect('platform_availability','');
+            setCheckboxes('platform_availability', []);
             setSelect('rating','');
             setSelect('development_status','');
             setField('base_price','');
@@ -137,7 +153,7 @@ html
           setField('game_name', p.game_name || '');
           setSelect('genre', p.genre || '');
           setField('release_date', p.release_date || '');
-          setSelect('platform_availability', p.platform_availability || '');
+          setCheckboxes('platform_availability', parseMulti(p.platform_availability || ''));
           setSelect('rating', p.rating || '');
           setSelect('development_status', p.development_status || '');
           setField('base_price', p.base_price || '');
