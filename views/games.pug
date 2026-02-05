@@ -18,17 +18,18 @@ html
               if game.properties.release_date
                 li Release Date: #{game.properties.release_date}
               if game.properties.platform_availability
-                li Platforms: #{game.properties.platform_availability}
-              if game.properties.rating
-                li Rating: #{game.properties.rating}
+                - var platforms = Array.isArray(game.properties.platform_availability) ? game.properties.platform_availability.join(', ') : game.properties.platform_availability
+                li Platforms: #{platforms}
+              if game.properties.esrb__pegi_rating
+                li Rating: #{game.properties.esrb__pegi_rating}
               if game.properties.development_status
                 li Status: #{game.properties.development_status}
               if game.properties.base_price
                 li Base Price: #{game.properties.base_price}
-              if game.properties.global_sales
-                li Global Sales: #{game.properties.global_sales}
-              if game.properties.lead_developer
-                li Lead Developer: #{game.properties.lead_developer}
+              if game.properties.global_sales__player_count
+                li Global Sales: #{game.properties.global_sales__player_count}
+              if game.properties.lead_developer__studio
+                li Lead Developer: #{game.properties.lead_developer__studio}
               if game.properties.game_engine
                 li Game Engine: #{game.properties.game_engine}
               if game.properties.store_url

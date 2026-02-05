@@ -18,11 +18,11 @@ app.get("/", async (req, res) => {
     "genre",
     "release_date",
     "platform_availability",
-    "rating",
+    "esrb__pegi_rating",
     "development_status",
     "base_price",
-    "global_sales",
-    "lead_developer",
+    "global_sales__player_count",
+    "lead_developer__studio",
     "game_engine",
     "store_url",
   ].join(",");
@@ -101,11 +101,11 @@ app.get("/update-cobj", async (req, res) => {
     "genre",
     "release_date",
     "platform_availability",
-    "rating",
+    "esrb__pegi_rating",
     "development_status",
     "base_price",
-    "global_sales",
-    "lead_developer",
+    "global_sales__player_count",
+    "lead_developer__studio",
     "game_engine",
     "store_url",
   ].join(",");
@@ -142,22 +142,28 @@ app.get("/update-cobj", async (req, res) => {
 app.post("/create-cobj", async (req, res) => {
   const existingId = req.body.existing_id;
 
-  // handle platform_availability array (checkboxes) or single value
+  // handle platform_availability array (checkboxes) or single value; send as an array to HubSpot
   const platformRaw = req.body.platform_availability;
-  const platformValue = Array.isArray(platformRaw)
-    ? platformRaw.join(",")
-    : platformRaw || "";
+  let platformArray = [];
+  if (Array.isArray(platformRaw)) {
+    platformArray = platformRaw.map((s) => String(s).trim()).filter(Boolean);
+  } else if (typeof platformRaw === "string" && platformRaw.trim()) {
+    platformArray = String(platformRaw)
+      .split(/[,;|]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
 
   const props = {
     game_name: req.body.game_name,
     genre: req.body.genre || "",
     release_date: req.body.release_date || "",
-    platform_availability: platformValue,
-    rating: req.body.rating || "",
+    platform_availability: platformArray,
+    esrb__pegi_rating: req.body.rating || "",
     development_status: req.body.development_status || "",
     base_price: req.body.base_price || "",
-    global_sales: req.body.global_sales || "",
-    lead_developer: req.body.lead_developer || "",
+    global_sales__player_count: req.body.global_sales || "",
+    lead_developer__studio: req.body.lead_developer || "",
     game_engine: req.body.game_engine || "",
     store_url: req.body.store_url || "",
   };
@@ -185,8 +191,6 @@ app.post("/create-cobj", async (req, res) => {
     return res.redirect("/update-cobj");
   }
 });
-
-// * Code for Route 3 goes here
 
 /** 
 * * This is sample code to give you a reference for how you should structure your calls. 

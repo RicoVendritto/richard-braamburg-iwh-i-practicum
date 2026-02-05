@@ -154,11 +154,11 @@ html
           setSelect('genre', p.genre || '');
           setField('release_date', p.release_date || '');
           setCheckboxes('platform_availability', parseMulti(p.platform_availability || ''));
-          setSelect('rating', p.rating || '');
+          setSelect('rating', p.esrb__pegi_rating || '');
           setSelect('development_status', p.development_status || '');
           setField('base_price', p.base_price || '');
-          setField('global_sales', p.global_sales || '');
-          setField('lead_developer', p.lead_developer || '');
+          setField('global_sales', p.global_sales__player_count || '');
+          setField('lead_developer', p.lead_developer__studio || '');
           setField('game_engine', p.game_engine || '');
           setField('store_url', p.store_url || '');
           setModeUpdate(p.game_name || game.id, game.id);
