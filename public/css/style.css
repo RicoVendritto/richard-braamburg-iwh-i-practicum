@@ -71,6 +71,32 @@ h1 {
     margin: 0.5rem 0 1rem;
 }
 
+.table-wrapper {
+    margin: 1rem;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    border: 1px solid #e0e0e0;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+.table th {
+    background: #f7f7f7;
+    font-weight: 600;
+}
+
+.table tr:nth-child(even) td {
+    background: #fafafa;
+}
+
 label, input {
     margin-top: 5px;
     display: block;

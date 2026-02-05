@@ -34,7 +34,7 @@ app.get("/", async (req, res) => {
   try {
     const resp = await axios.get(gamesEndpoint, { headers });
     const data = resp.data.results || [];
-    res.render("games", { title: "Games | HubSpot APIs", data });
+    res.render("homepage", { title: "Games | HubSpot APIs", data });
   } catch (error) {
     console.error("Error fetching games:", error.message);
     if (error.response) {

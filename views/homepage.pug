@@ -1,0 +1,51 @@
+doctype html
+html
+  head
+    title= `${title}`
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    link(rel="stylesheet" href="/css/style.css")
+  body
+    h1 Games
+    a.btn(href="/update-cobj") Add to this table
+
+    .table-wrapper
+      if data && data.length
+        table.table
+          thead
+            tr
+              th ID
+              th Name
+              th Genre
+              th Release Date
+              th Platforms
+              th Rating
+              th Status
+              th Base Price
+              th Global Sales
+              th Lead Developer
+              th Game Engine
+              th Store
+          tbody
+            each game in data
+              - const p = game.properties || {}
+              tr
+                td #{game.id}
+                td #{p.game_name || p.name || ''}
+                td #{p.genre || ''}
+                td #{p.release_date || ''}
+                - var platforms = Array.isArray(p.platform_availability) ? p.platform_availability.join(', ') : (p.platform_availability || '')
+                td #{platforms}
+                td #{p.esrb__pegi_rating || ''}
+                td #{p.development_status || ''}
+                td #{p.base_price || ''}
+                td #{p.global_sales__player_count || ''}
+                td #{p.lead_developer__studio || ''}
+                td #{p.game_engine || ''}
+                td
+                  if p.store_url
+                    a(href=p.store_url target="_blank") #{p.store_url}
+                  else
+                    | -
+      else
+        p No games found. 
+        a.btn(href="/update-cobj") Add one
