@@ -25,7 +25,8 @@ html
               th Lead Developer
               th Game Engine
               th Store
-          tbody
+              th
+              th
             each game in data
               - const p = game.properties || {}
               tr
@@ -48,6 +49,24 @@ html
                     | -
                 td
                   a.btn.small(href=`/update-cobj?selected=${game.id}`) Edit
+                td
+                  a.btn.small.danger(href="#" data-id=`${game.id}` data-name=`${p.game_name || ''}`) Delete
       else
         p No games found. 
         a.btn(href="/update-cobj") Add one
+
+    // client-side delete confirmation (no server-side delete implemented)
+    script.
+      (function(){
+        document.addEventListener('click', function(e){
+          const el = e.target.closest && e.target.closest('.btn.danger');
+          if(!el) return;
+          e.preventDefault();
+          const id = el.getAttribute('data-id');
+          const name = el.getAttribute('data-name') || id;
+          const confirmed = confirm(`Are you sure you want to delete "${name}" (id: ${id})? This action is not implemented yet.`);
+          if(confirmed){
+            alert('Delete confirmed. DELETE request is not implemented in this demo. Intended endpoint: /crm/v3/objects/2-57074073/' + id);
+          }
+        });
+      })();
